@@ -23,19 +23,14 @@ GitHub -> [ntrexlab/AHRS_Can](https://github.com/ntrexlab/AHRS_Can)
     #### 2. USB2CAN_UI_v2을 설치한다.
     #### 3. AHRS_USB_to_CAN를 PC에 연결 후 USB2CAN_UI_v2을 실행한다.
     #### 4. Connect 버튼(1)을 클릭한다.
-    #### 5. Connection(2) 창이 뜨면 COM PORT의 연결 USB 번호를 설정한다.
-    #### 6. Baudrate를 115200으로 설정한 후 Connect 버튼을 클릭한다.
-    #### 7. Configure 버튼을 클릭한다.
-    ![ahrs연결](https://user-images.githubusercontent.com/85467544/121452116-d7c48980-c9d9-11eb-90ff-9787a9a066f1.png)
-    #### 8. RS-232 Bandrate(3) 확인한다.
-    #### 9. Transmission Mode(4)의 값을 Binary로 지정한다. 
-    #### 10. Select RS232 Data Type(5) 확인한다. 
-    ![ahrsui](https://user-images.githubusercontent.com/85467544/121452514-84067000-c9da-11eb-8d20-a0f80b553315.png)
-    #### 11. Arduino_Hardware를 제작한다.(Hardware)
-    #### 12. Arduino 프로그램을 설치한다.
-    #### 13. 11번에서 제작한 Hardware를 연결 후 보드,프로세서,포트를 제작한 하드웨어에 맞게 설정한다.
-     ![아두이노s](https://user-images.githubusercontent.com/85467544/121452666-c9c33880-c9da-11eb-95f6-901ed5563d18.png)
-    #### 14. [코드](http://github.com/ntrexlab/AHRS_Binary/tree/main/ahrs_binary)를 작성한다.
+    #### 5. USB_to_CAN(FIFO) 확인 후 Ok 버튼(2)
+    ![ui11](https://user-images.githubusercontent.com/85467544/121843979-33667e00-cd1e-11eb-95e3-0cf4194ff5c2.png)
+    #### 6. [예제](http://www.devicemart.co.kr/goods/view?no=1323536#goods_file)를 다운 받는다.
+    #### 7. Example_VC2008.Zip 안에 CAN_ExampleFIFO를 압축을 푼다.
+    #### 8. Visual Studio로 CAN_ExampleFIFO 폴더를 연다.
+    #### 9. Source Files의 CAN_Console.cpp 파일을 실행한다.
+    ![can_Test](https://user-images.githubusercontent.com/85467544/121844600-3150ef00-cd1f-11eb-9403-b10988ccb184.gif)
+    #### 10. [코드](http://github.com/ntrexlab/AHRS_Binary/tree/main/ahrs_binary)를 작성한다.
     
     
     ```c
