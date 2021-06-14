@@ -25,115 +25,126 @@ GitHub -> [ntrexlab/AHRS_Can](https://github.com/ntrexlab/AHRS_Can)
     #### 4. Connect 버튼(1)을 클릭한다.
     #### 5. USB_to_CAN(FIFO) 확인 후 Ok 버튼(2)
     ![ui11](https://user-images.githubusercontent.com/85467544/121843979-33667e00-cd1e-11eb-95e3-0cf4194ff5c2.png)
-    #### 6. [예제](http://www.devicemart.co.kr/goods/view?no=1323536#goods_file)를 다운 받는다.
-    #### 7. Example_VC2008.Zip 안에 CAN_ExampleFIFO를 압축을 푼다.
-    #### 8. Visual Studio로 CAN_ExampleFIFO 폴더를 연다.
-    #### 9. Source Files의 CAN_Console.cpp 파일을 실행한다.
-    ![can_Test](https://user-images.githubusercontent.com/85467544/121844600-3150ef00-cd1f-11eb-9403-b10988ccb184.gif)
-    #### 10. [코드](http://github.com/ntrexlab/AHRS_Binary/tree/main/ahrs_binary)를 작성한다.
-    
-    
-    ```c
-    #define DeviceID 0x01
-    #define STX 0x02
-    #define ETX 0x03
-    #define Command 0xF0
-    #define ACC 0x33
-    #define GYR 0x34
-    #define ANG 0x35
+    #### 6. [예제](https://github.com/ntrexlab/AHRS_Can/tree/main/CAN_ExampleFIFO)를 다운 받는다.
+    #### 7. Visual Studio로 CAN_ExampleFIFO 폴더를 연다.
+    #### 8. Source Files의 CAN_Console.cpp 파일을 실행한다.
+     ```c
 
-    //define은 AHRS [메뉴얼](http://www.devicemart.co.kr/goods/view?no=1310790#goods_file) datasheet 보고 설정. 아래 이미지로 첨부.
+    void RecvCanMessage(CAN_HANDLE h){
+	    char rdata[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	    long rid;
+	    int rlen, ext, rtr;
 
+        // 데이터를 수신한다.
+	    int ret = CAN_Recv(h, &rid, &rlen, rdata, &ext, &rtr);
+	    if (ret) {
+		    // 수신된 메시지가 있다면 리턴 값은 1이다. 
+		    // 수신된 메시지가 없다면 리턴 값은 0이다.
+		    // 또한, 잘못된 핸들에 대해 수신을 시도할 경우에도 리턴 값은 0이다.
 
-    unsigned char buf; //센서에서 들어오는 값을 저장.
-    unsigned char buff_arrey[13] = {0,};  //buf를 통해 들어오는 값을 배열로 저장.
-    char cs = 0; //checksum 
-    int16_t acc_x = 0, acc_y = 0, acc_z = 0, gyr_x = 0, gyr_y = 0, gyr_z = 0, ang_x = 0, ang_y = 0, ang_z = 0; //16비트 크기의 부호있는 정수형 선언.
+            printf ("Recv: [%d] %02X %02X %02X %02X %02X %02X %02X %02X (%d)\n",
+			    rid, (int)(unsigned char)rdata[0], (int)(unsigned char)rdata[1],
+			    (int)(unsigned char)rdata[2], (int)(unsigned char)rdata[3],
+			    (int)(unsigned char)rdata[4], (int)(unsigned char)rdata[5],
+			    (int)(unsigned char)rdata[6], (int)(unsigned char)rdata[7],
+			    rlen);
 
-    void setup() {
-  
-    Serial.begin(115200); //AHRS_UI Baudrate 동일하게 설정.
-
-    }
-
-    void loop() {
-
-        if (Serial.available()){  
-    
-            for(int i=0; i<13 ; i++){
-        
-                Serial.readBytes(&buf,1);
-                buff_arrey[i] = buf;
-
-                //버퍼에 들어오는 값을 buf를 통해 buff_arrey 배열에 1~13(0~12)까지 순서대로 저장.
-            }          
-      
-            if (buff_arrey[0] == STX && buff_arrey[2] == DeviceID && buff_arrey[3] == Command && buff_arrey[12] == ETX){
-
-                //buff_arrey 값이 위에 datasheet 대로 설정한 값과 같을경우.
-          
-                cs = 0; //CheckSumReset
-
-                for (int i = 2; i < 11; ++i){
-                    cs += buff_arrey[i];  
-                    //buff_arrey 배열의 값을 cs에 추가.
-                }
-                
-                if (cs == buff_arrey[11]){  //cs값이 buff_arrey[11] 과 같으면 정상 패킷.
-                
-                    switch (buff_arrey[4]){ //buff_arrey[4] = index
-                
-                        case ACC: //가속도
-                            
-                            acc_x = (buff_arrey[5] | buff_arrey[6] << 8);  // value1.
-                            acc_y = (buff_arrey[7] | buff_arrey[8] << 8);  // value2.
-                            acc_z = (buff_arrey[9] | buff_arrey[10] << 8); // value3.
-                            Serial.print("ACC  ");
-                            Serial.print(acc_x / 1000.0); //가속도 복원시 변환 식
-                            Serial.print("  ");
-                            Serial.print(acc_y / 1000.0); //가속도 복원시 변환 식
-                            Serial.print("  ");
-                            Serial.print(acc_z / 1000.0); //가속도 복원시 변환 식
-                            break;
-                    
-                        case GYR: //각속도
-                            
-                            gyr_x = (buff_arrey[5] | buff_arrey[6] << 8); // value1.
-                            gyr_y = (buff_arrey[7] | buff_arrey[8] << 8); // value2.
-                            gyr_z = (buff_arrey[9] | buff_arrey[10] << 8); // value3.
-                            Serial.print("GYR  ");
-                            Serial.print(gyr_x / 10.0); //각속도 복원시 변환 식
-                            Serial.print("  ");
-                            Serial.print(gyr_y / 10.0); //각속도 복원시 변환 식
-                            Serial.print("  ");
-                            Serial.print(gyr_z / 10.0); //각속도 복원시 변환 식
-                            break;
-                    
-                        case ANG: // 오일러 각도(roll, pitch, yaw )
-                            
-                            ang_x = (buff_arrey[5] | buff_arrey[6] << 8); // value1.
-                            ang_y = (buff_arrey[7] | buff_arrey[8] << 8); // value2.
-                            ang_z = (buff_arrey[9] | buff_arrey[10] << 8); // value3.
-                            Serial.print("ANG  ");
-                            Serial.print(ang_x/100.0); //오일러각 복원시 변환 식
-                            Serial.print("  ");
-                            Serial.print(ang_y/100.0); //오일러각 복원시 변환 식
-                            Serial.print("  ");
-                            Serial.print(ang_z/100.0); //오일러각 복원시 변환 식
-                            break;
-                    }
-                }
-            }
-            Serial.println("");
-        }
-     }
     ```
+    ![can_Test](https://user-images.githubusercontent.com/85467544/121844600-3150ef00-cd1f-11eb-9403-b10988ccb184.gif)
+   
+    #### 9. 코드를 수정한다. (RecvCanMessage)
+    ```c
+    //추가
+    #define ACC 0x33 
+    #define GYR 0x34 
+    #define ANG 0x35 
+    // 4. Datasheet 참고 설정
+
+    void RecvCanMessage(CAN_HANDLE h){
+	    char rdata[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	    long rid;
+	    int rlen, ext, rtr;
+
+        //추가
+        int16_t acc_x = 0, acc_y = 0, acc_z = 0, gyr_x = 0, gyr_y = 0, gyr_z = 0, ang_x = 0, ang_y = 0, ang_z = 0; 
+        //배열 값을 int16_t 형식으로 받기 위해 선언.
+	    float accx = 0, accy = 0, accz = 0, gyrx =0 , gyry=0,gyrz=0,angx=0, angy=0, angz=0;
+        // 최종 값을 받기 위해 선언.
+
+        // 데이터를 수신한다.
+	    int ret = CAN_Recv(h, &rid, &rlen, rdata, &ext, &rtr);
+	    if (ret) {
+		    // 수신된 메시지가 있다면 리턴 값은 1이다. 
+		    // 수신된 메시지가 없다면 리턴 값은 0이다.
+		    // 또한, 잘못된 핸들에 대해 수신을 시도할 경우에도 리턴 값은 0이다.
+
+        //추가
+        switch (rdata[1]){
+            // rdata[1] -> index (4. DataSheet 참고 설정)
+		    case ACC:
+
+			    acc_x = ((int)(unsigned char)rdata[2] | (int)(unsigned char)rdata[3] << 8);
+			    acc_y = ((int)(unsigned char)rdata[4] | (int)(unsigned char)rdata[5] << 8);
+			    acc_z = ((int)(unsigned char)rdata[6] | (int)(unsigned char)rdata[7] << 8);
+                //rdata 배열에 있는 값을 int 형식으로 저장.
+
+			    accx = acc_x / 1000.0;
+			    accy = acc_y / 1000.0;
+			    accz = acc_z / 1000.0;
+                // int16_t 형식을 /1000.0으로 저장.(4.DataSheet 참고 설정)
+
+			    printf("ACC는 : %+.2f %+.2f %+.2f \n", accx, accy, accz);
+                // 값이 +일땐 +로, -일땐 -로 소수점 2번째 자리까지 출력.
+			    break;
+
+		    case GYR:
+
+                gyr_x = ((int)(unsigned char)rdata[2] | (int)(unsigned char)rdata[3] << 8);
+			    gyr_y = ((int)(unsigned char)rdata[4] | (int)(unsigned char)rdata[5] << 8);
+			    gyr_z = ((int)(unsigned char)rdata[6] | (int)(unsigned char)rdata[7] << 8);
+                //rdata 배열에 있는 값을 int 형식으로 받아옴.
+
+			    gyrx = gyr_x / 10.0;
+			    gyry = gyr_y / 10.0;
+			    gyrz = gyr_z / 10.0;
+                // int16_t 형식을 /10.0으로 저장.(4.DataSheet 참고 설정)
+
+                printf("GYR는  : %+.2f %+.2f %+.2f \n", gyrx, gyry, gyrz);
+                // 값이 +일땐 +로, -일땐 -로 소수점 2번째 자리까지 출력.
+			    break;
+
+		    case ANG:
+                
+                ang_x = ((int)(unsigned char)rdata[2] | (int)(unsigned char)rdata[3] << 8);
+			    ang_y = ((int)(unsigned char)rdata[4] | (int)(unsigned char)rdata[5] << 8);
+			    ang_z = ((int)(unsigned char)rdata[6] | (int)(unsigned char)rdata[7] << 8);
+                //rdata 배열에 있는 값을 int 형식으로 받아옴.
+
+                angx = ang_x / 100.0;
+			    angy = ang_y / 100.0;
+			    angz = ang_z / 100.0;
+                //int16_t 형식을 /100.0으로 저장.(4.DataSheet 참고 설정)
+
+			    printf("ANG는 : %+.2f %+.2f %+.2f  \n", angx, angy, angz);
+                // 값이 +일땐 +로, -일땐 -로 소수점 2번째 자리까지 출력.
+                break;
+		    }
+
+		printf("\n");
+        
+        }
+    }
+    ```
+
+
+
+
+
 ***
 * ### 4. DataSheet
 
-    ![동기화](https://user-images.githubusercontent.com/85467544/121456121-823fab00-c9e0-11eb-919d-c036dfc42c2a.PNG)
-    ![변환](https://user-images.githubusercontent.com/85467544/121456125-8370d800-c9e0-11eb-9afc-0be6999f7738.PNG)
-
+    ![동](https://user-images.githubusercontent.com/85467544/121861144-89deb700-cd34-11eb-88f1-e67ee52015f6.PNG)
+    ![변](https://user-images.githubusercontent.com/85467544/121861146-8b0fe400-cd34-11eb-9276-7bef175a0077.PNG)
 ***
   * ### 5. Test
     ![BI](https://user-images.githubusercontent.com/85467544/121464607-1e70ae80-c9ef-11eb-845e-2a0639b8e3d1.gif)
@@ -142,7 +153,7 @@ GitHub -> [ntrexlab/AHRS_Can](https://github.com/ntrexlab/AHRS_Can)
     #### 2. ACC -> 가속도 X축, Y축, Z축 값.
     #### 3. GYR -> 각속도 X축, Y축, Z축 값.
     #### 4. ANG -> 오일러각(roll, pitch, yaw) X축, Y축, Z축 값
-    #### 5. 공백줄 -> CheckSum 결과 비정상 값. 
+   
 
 
 ***
