@@ -137,6 +137,12 @@ GitHub -> [ntrexlab/AHRS_Can](https://github.com/ntrexlab/AHRS_Can)
     ```
 
 
+    ##### 1. sp=100 -> 데이터 수신속도 100ms.
+    ##### 2. ACC -> 가속도 X축, Y축, Z축 값.
+    ##### 3. GYR -> 각속도 X축, Y축, Z축 값.
+    ##### 4. ANG -> 오일러각(roll, pitch, yaw) X축, Y축, Z축 값
+   
+
 
 
 
@@ -146,14 +152,5 @@ GitHub -> [ntrexlab/AHRS_Can](https://github.com/ntrexlab/AHRS_Can)
     ![동](https://user-images.githubusercontent.com/85467544/121861144-89deb700-cd34-11eb-88f1-e67ee52015f6.PNG)
     ![변](https://user-images.githubusercontent.com/85467544/121861146-8b0fe400-cd34-11eb-9276-7bef175a0077.PNG)
 ***
-  * ### 5. Test
-    ![BI](https://user-images.githubusercontent.com/85467544/121464607-1e70ae80-c9ef-11eb-845e-2a0639b8e3d1.gif)
-    
-    #### 1. sp=100 -> 데이터 수신속도 100ms.
-    #### 2. ACC -> 가속도 X축, Y축, Z축 값.
-    #### 3. GYR -> 각속도 X축, Y축, Z축 값.
-    #### 4. ANG -> 오일러각(roll, pitch, yaw) X축, Y축, Z축 값
-   
 
 
-***
