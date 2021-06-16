@@ -81,6 +81,7 @@ GitHub -> [ntrexlab/AHRS_Can](https://github.com/ntrexlab/AHRS_Can)
         //추가
         switch (rdata[1]){
             // rdata[1] -> index (4. DataSheet 참고 설정)
+            
 		    case ACC:
 
 			    acc_x = ((int)(unsigned char)rdata[2] | (int)(unsigned char)rdata[3] << 8);
@@ -150,5 +151,12 @@ GitHub -> [ntrexlab/AHRS_Can](https://github.com/ntrexlab/AHRS_Can)
     ![동](https://user-images.githubusercontent.com/85467544/121861144-89deb700-cd34-11eb-88f1-e67ee52015f6.PNG)
     ![변](https://user-images.githubusercontent.com/85467544/121861146-8b0fe400-cd34-11eb-9276-7bef175a0077.PNG)
 ***
+* ### 5. 영상
 
-
+    ![can_fin](https://user-images.githubusercontent.com/85467544/122185453-1372be00-cec8-11eb-896b-f1bfc0b5f84f.gif)
+    #### 1. ACC -> 가속도 X축, Y축, Z축 값.
+    #### 2. GYR -> 각속도 X축, Y축, Z축 값.
+    #### 3. ANG -> 오일러각(roll, pitch, yaw) X축, Y축, Z축 값
+   
+ 
+***
